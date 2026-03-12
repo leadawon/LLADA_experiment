@@ -2,18 +2,17 @@
 set -euo pipefail
 
 # LLaDA-Instruct lm-eval harness runner
-# Full evaluation preset: GPU 0 + limit 9999
-# gsm8k_cot excluded
+# mbpp_instruct only, limit 200
 
 GPU_ID=0
-LIMIT=9999
+LIMIT=200
 BASE_PORT="${BASE_PORT:-12640}"
-TASKS="${TASKS:-humaneval_instruct mbpp_instruct ifeval}"
+TASKS="mbpp_instruct"
 STEP_RATIOS="${STEP_RATIOS:-1.0 0.75 0.5 0.25 0.125}"
 STEP_MIN="${STEP_MIN:-32}"
 
 MODEL_ID="${MODEL_ID:-GSAI-ML/LLaDA-8B-Instruct}"
-OUT_ROOT="${OUT_ROOT:-output_llada_instruct_lmeval_limit${LIMIT}}"
+OUT_ROOT="${OUT_ROOT:-output_llada_instruct_mbpp_limit${LIMIT}}"
 ACCELERATE_BIN="${ACCELERATE_BIN:-}"
 
 if [[ -z "${ACCELERATE_BIN}" ]]; then
@@ -37,10 +36,7 @@ export PYTHONPATH=.
 
 task_max_new_tokens () {
   case "$1" in
-    gsm8k_cot) echo 256 ;;
-    humaneval_instruct) echo 512 ;;
     mbpp_instruct) echo 768 ;;
-    ifeval) echo 768 ;;
     *)
       echo "Unknown task: $1" >&2
       return 2
